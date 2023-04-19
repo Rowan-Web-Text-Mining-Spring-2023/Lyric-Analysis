@@ -1,6 +1,11 @@
+import os
+from dotenv import load_dotenv
 import pymongo
+load_dotenv()
 
-client = pymongo.MongoClient('mongodb+srv://Admin:TQ81m9PbqJvEKNOv@cluster0.ca1yfqc.mongodb.net/test')
+MONGO_CONNECTION_STRING = os.getenv("MONGO_CONNECTION_STRING")
+
+client = MONGO_CONNECTION_STRING
 db = client['test']
 col = db['playlistitemsschemas']
 
