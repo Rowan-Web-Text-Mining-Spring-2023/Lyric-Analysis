@@ -5,7 +5,7 @@ load_dotenv()
 
 MONGO_CONNECTION_STRING = os.getenv("MONGO_CONNECTION_STRING")
 
-client = MONGO_CONNECTION_STRING
+client = pymongo.MongoClient(MONGO_CONNECTION_STRING)
 db = client['test']
 col = db['playlistitemsschemas']
 
