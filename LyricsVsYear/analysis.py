@@ -19,6 +19,8 @@ client = pymongo.MongoClient(MONGO_CONNECTION_STRING)
 db = client['test']
 col = db['playlistitemsschemas']
 
+
+years_count = {}
 #Go through each song and store each unique word
 words = []  #List of all words
 years = []  #List of every year present
@@ -28,6 +30,7 @@ for song in rec:
     release = song['track']['album']['release_date'][0:4]
     if release not in years:
         years.append(release)
+        years_count[release] = 0
     if 'Lyrics' in song['lyrics']:
         lyrics = contractions.fix(song['lyrics'].split('Lyrics')[1].lower()) #Remove contractions and get rid of header area with languages
         lyrics = re.sub('[.*?]', '', lyrics) #Remove text such as [Chorus] or [Verse 1]
@@ -37,6 +40,8 @@ for song in rec:
             if word not in words:
                 words.append(word)
         pairs.append([lyrics, release])
+        years_count[release] += len(lyrics_words)
+
 
 
 #Fill map with keys of each year and each value of every present year and the count of the word to 0
@@ -55,3 +60,5 @@ for song in pairs:
 #Save all data to json file
 with open('LyricsVsYear/words_years.json', 'w') as f:
     json.dump(data, f)
+with open('LyricsVsyear/year_counts.json', 'w') as f:
+    json.dump(years_count, f)

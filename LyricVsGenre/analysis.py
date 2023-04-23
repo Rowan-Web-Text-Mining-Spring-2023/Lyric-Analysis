@@ -19,16 +19,24 @@ client = pymongo.MongoClient(MONGO_CONNECTION_STRING)
 db = client['test']
 col = db['playlistitemsschemas']
 
+#Load valid genres
+with open('LyricVsGenre/genres.json', encoding='utf-8') as file:
+    genres = json.load(file)
+
+genre_count = {}
+for g in genres:
+    genre_count[g] = 0
+
 #Go through each song and store each unique word
 words = []  #List of all words
-genres = []  #List of every year present
 pairs = []  #Combination of lyrics and year, used later
 rec = col.find({}, {})
 for song in rec:
     track = song["genres"]
-    for i in track:
-        if i not in genres:
-            genres.append(i)
+    track_valid = []
+    for t in track:
+        if t in genres:
+            track_valid.append(t)
     if 'Lyrics' in song['lyrics']:
         lyrics = contractions.fix(song['lyrics'].split('Lyrics')[1].lower()) #Remove contractions and get rid of header area with languages
         lyrics = re.sub('[.*?]', '', lyrics) #Remove text such as [Chorus] or [Verse 1]
@@ -37,8 +45,12 @@ for song in rec:
         for word in lyrics_words:
             if word not in words:
                 words.append(word)
-        pairs.append([lyrics, track])
+        pairs.append([lyrics, track_valid])
+        for t in track_valid:
+            genre_count[t] += len(lyrics_words)
 
+with open('test.json', 'w') as file:
+    json.dump(genres, file)
 
 #Fill map with keys of each year and each value of every present year and the count of the word to 0
 data = {}
@@ -56,5 +68,7 @@ for song in pairs:
             data[word][i] += song[0].count(word)
 
 #Save all data to json file
-with open('LyricsVsGenre/words_genres.json', 'w') as f:
+with open('LyricVsGenre/words_genres.json', 'w') as f:
     json.dump(data, f)
+with open('LyricVsGenre/genres_count.json', 'w') as f:
+    json.dump(genre_count, f)
