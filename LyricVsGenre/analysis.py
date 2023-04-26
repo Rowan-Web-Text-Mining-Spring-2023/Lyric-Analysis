@@ -4,6 +4,20 @@ import pymongo
 import contractions
 import re
 import json
+import nltk
+import demoji
+from unicodedata import normalize
+
+
+nltk.download('stopwords')
+stops_en = nltk.corpus.stopwords.words('english')
+
+with open('new_stops.txt') as file:
+    new_stops = []
+    for line in file:
+        new_stops.append(line.strip())
+    stops_en.extend(new_stops)
+
 
 #Function to remove special characters
 to_remove = ['(', ')', '"', '?', '!', '-', ',']
@@ -11,6 +25,14 @@ def remove_extra(word):
     for r in to_remove:
         word = word.replace(r, '')
     return word
+
+def remove_stopwords(value):
+    remove_stops = ''
+    words = value.split(' ')
+    for word in words:
+        if word not in stops_en: 
+            remove_stops = remove_stops + word + ' '
+    return remove_stops
 
 #Create Connection to database
 load_dotenv()
@@ -41,6 +63,10 @@ for song in rec:
         lyrics = contractions.fix(song['lyrics'].split('Lyrics')[1].lower()) #Remove contractions and get rid of header area with languages
         lyrics = re.sub('[.*?]', '', lyrics) #Remove text such as [Chorus] or [Verse 1]
         lyrics = remove_extra(lyrics) #Remove special characters
+        lyrics = demoji.replace(lyrics, "")
+        t = normalize('NFKD', lyrics).encode('ascii', 'ignore')
+        lyrics = t.decode()
+        lyrics = remove_stopwords(lyrics)
         lyrics_words = lyrics.split()
         for word in lyrics_words:
             if word not in words:

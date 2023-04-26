@@ -6,13 +6,13 @@ counts = {}
 data = {}
 genres = []
 
-with open('genres_count.json', encoding='utf-8') as file:
+with open('LyricVsGenre/genres_count.json', encoding='utf-8') as file:
     counts = json.load(file)
 
-with open('words_genres.json', encoding='utf-8') as file:
+with open('LyricVsGenre/words_genres.json', encoding='utf-8') as file:
     data = json.load(file)
 
-with open('genres.json', encoding='utf-8') as file:
+with open('LyricVsGenre/genres.json', encoding='utf-8') as file:
     genres = json.load(file)
 
 
