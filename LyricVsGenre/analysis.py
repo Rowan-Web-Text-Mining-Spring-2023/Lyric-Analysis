@@ -18,12 +18,11 @@ with open('new_stops.txt') as file:
         new_stops.append(line.strip())
     stops_en.extend(new_stops)
 
-
 #Function to remove special characters
 to_remove = ['(', ')', '"', '?', '!', '-', ',']
 def remove_extra(word):
     for r in to_remove:
-        word = word.replace(r, '')
+        word = word.replace(r, '').replace('\n', ' ').replace('\t', ' ')
     return word
 
 def remove_stopwords(value):

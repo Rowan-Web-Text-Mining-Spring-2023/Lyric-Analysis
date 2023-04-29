@@ -19,7 +19,8 @@ def get_colordict(palette,number,start):
 def choose_year(year):
     output = {}
     for word in data:
-        output[word] = data[word][year]
+        if '[chorus]' not in word and '&' not in word and 'lik' not in word and 'tay' not in word and 'fin' not in word and 'com' not in word and 'ven' not in word and 'con' not in word:
+            output[word] = data[word][year]
         #print(output[word])
     
     numbers = []
@@ -39,6 +40,8 @@ def choose_year(year):
             top_words.append([word, output[word]])
     
     fields = ['word', 'count']
+
+    top_words.sort(key=lambda x: x[1], reverse=True)
 
     print(top_words)
     with open('my.csv', 'w') as f:

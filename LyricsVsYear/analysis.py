@@ -22,7 +22,7 @@ with open('new_stops.txt') as file:
 to_remove = ['(', ')', '"', '?', '!', '-', ',']
 def remove_extra(word):
     for r in to_remove:
-        word = word.replace(r, '').replace('\n', ' ')
+        word = word.replace(r, '').replace('\n', ' ').replace('\t', ' ')
     return word
 
 def remove_stopwords(value):
